@@ -1,0 +1,1 @@
+/Users/user/Documents/android thread/MyApplication/sdk/build/intermediates/cxx/Debug/6k2q3v24/obj/arm64-v8a

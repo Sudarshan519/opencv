@@ -1,0 +1,4 @@
+/Users/user/Library/Android/sdk/cmake/3.18.1/bin/ninja \
+  -C \
+  "/Users/user/Documents/android thread/MyApplication/sdk/.cxx/Debug/6k2q3v24/arm64-v8a" \
+  opencv_jni_shared
