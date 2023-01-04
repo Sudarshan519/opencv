@@ -1,0 +1,1 @@
+/Users/user/Documents/android thread/MyApplication/sdk/build/intermediates/cxx/RelWithDebInfo/2y2s1055/obj/x86

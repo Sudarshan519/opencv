@@ -1,0 +1,170 @@
+[
+  {
+    "level_": 0,
+    "message_": "Start JSON generation. Platform version: 21 min SDK version: x86",
+    "file_": "/Users/user/Documents/android thread/MyApplication/sdk/libcxx_helper/CMakeLists.txt",
+    "tag_": "release|x86",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {},
+      "fieldsDescending": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": -1723311446
+  },
+  {
+    "level_": 0,
+    "message_": "rebuilding JSON /Users/user/Documents/android thread/MyApplication/sdk/.cxx/RelWithDebInfo/2y2s1055/x86/android_gradle_build.json due to:",
+    "file_": "/Users/user/Documents/android thread/MyApplication/sdk/libcxx_helper/CMakeLists.txt",
+    "tag_": "release|x86",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {},
+      "fieldsDescending": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": -110319723
+  },
+  {
+    "level_": 0,
+    "message_": "- expected json /Users/user/Documents/android thread/MyApplication/sdk/.cxx/RelWithDebInfo/2y2s1055/x86/android_gradle_build.json file is not present, will remove stale json folder",
+    "file_": "/Users/user/Documents/android thread/MyApplication/sdk/libcxx_helper/CMakeLists.txt",
+    "tag_": "release|x86",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {},
+      "fieldsDescending": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": 1180887175
+  },
+  {
+    "level_": 0,
+    "message_": "- missing previous command file /Users/user/Documents/android thread/MyApplication/sdk/.cxx/RelWithDebInfo/2y2s1055/x86/metadata_generation_command.txt, will remove stale json folder",
+    "file_": "/Users/user/Documents/android thread/MyApplication/sdk/libcxx_helper/CMakeLists.txt",
+    "tag_": "release|x86",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {},
+      "fieldsDescending": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": -1630096219
+  },
+  {
+    "level_": 0,
+    "message_": "- command changed from previous, will remove stale json folder",
+    "file_": "/Users/user/Documents/android thread/MyApplication/sdk/libcxx_helper/CMakeLists.txt",
+    "tag_": "release|x86",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {},
+      "fieldsDescending": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": 737818182
+  },
+  {
+    "level_": 0,
+    "message_": "created folder \u0027/Users/user/Documents/android thread/MyApplication/sdk/.cxx/RelWithDebInfo/2y2s1055/x86\u0027",
+    "file_": "/Users/user/Documents/android thread/MyApplication/sdk/libcxx_helper/CMakeLists.txt",
+    "tag_": "release|x86",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {},
+      "fieldsDescending": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": 1499480620
+  },
+  {
+    "level_": 0,
+    "message_": "executing cmake /Users/user/Library/Android/sdk/cmake/3.18.1/bin/cmake \\\n  \"-H/Users/user/Documents/android thread/MyApplication/sdk/libcxx_helper\" \\\n  -DCMAKE_SYSTEM_NAME\u003dAndroid \\\n  -DCMAKE_EXPORT_COMPILE_COMMANDS\u003dON \\\n  -DCMAKE_SYSTEM_VERSION\u003d21 \\\n  -DANDROID_PLATFORM\u003dandroid-21 \\\n  -DANDROID_ABI\u003dx86 \\\n  -DCMAKE_ANDROID_ARCH_ABI\u003dx86 \\\n  -DANDROID_NDK\u003d/Users/user/Library/Android/sdk/ndk/23.1.7779620 \\\n  -DCMAKE_ANDROID_NDK\u003d/Users/user/Library/Android/sdk/ndk/23.1.7779620 \\\n  -DCMAKE_TOOLCHAIN_FILE\u003d/Users/user/Library/Android/sdk/ndk/23.1.7779620/build/cmake/android.toolchain.cmake \\\n  -DCMAKE_MAKE_PROGRAM\u003d/Users/user/Library/Android/sdk/cmake/3.18.1/bin/ninja \\\n  \"-DCMAKE_LIBRARY_OUTPUT_DIRECTORY\u003d/Users/user/Documents/android thread/MyApplication/sdk/build/intermediates/cxx/RelWithDebInfo/2y2s1055/obj/x86\" \\\n  \"-DCMAKE_RUNTIME_OUTPUT_DIRECTORY\u003d/Users/user/Documents/android thread/MyApplication/sdk/build/intermediates/cxx/RelWithDebInfo/2y2s1055/obj/x86\" \\\n  -DCMAKE_BUILD_TYPE\u003dRelWithDebInfo \\\n  \"-B/Users/user/Documents/android thread/MyApplication/sdk/.cxx/RelWithDebInfo/2y2s1055/x86\" \\\n  -GNinja \\\n  -DANDROID_STL\u003dc++_shared\n",
+    "file_": "/Users/user/Documents/android thread/MyApplication/sdk/libcxx_helper/CMakeLists.txt",
+    "tag_": "release|x86",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {},
+      "fieldsDescending": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": 766804209
+  },
+  {
+    "level_": 0,
+    "message_": "/Users/user/Library/Android/sdk/cmake/3.18.1/bin/cmake \\\n  \"-H/Users/user/Documents/android thread/MyApplication/sdk/libcxx_helper\" \\\n  -DCMAKE_SYSTEM_NAME\u003dAndroid \\\n  -DCMAKE_EXPORT_COMPILE_COMMANDS\u003dON \\\n  -DCMAKE_SYSTEM_VERSION\u003d21 \\\n  -DANDROID_PLATFORM\u003dandroid-21 \\\n  -DANDROID_ABI\u003dx86 \\\n  -DCMAKE_ANDROID_ARCH_ABI\u003dx86 \\\n  -DANDROID_NDK\u003d/Users/user/Library/Android/sdk/ndk/23.1.7779620 \\\n  -DCMAKE_ANDROID_NDK\u003d/Users/user/Library/Android/sdk/ndk/23.1.7779620 \\\n  -DCMAKE_TOOLCHAIN_FILE\u003d/Users/user/Library/Android/sdk/ndk/23.1.7779620/build/cmake/android.toolchain.cmake \\\n  -DCMAKE_MAKE_PROGRAM\u003d/Users/user/Library/Android/sdk/cmake/3.18.1/bin/ninja \\\n  \"-DCMAKE_LIBRARY_OUTPUT_DIRECTORY\u003d/Users/user/Documents/android thread/MyApplication/sdk/build/intermediates/cxx/RelWithDebInfo/2y2s1055/obj/x86\" \\\n  \"-DCMAKE_RUNTIME_OUTPUT_DIRECTORY\u003d/Users/user/Documents/android thread/MyApplication/sdk/build/intermediates/cxx/RelWithDebInfo/2y2s1055/obj/x86\" \\\n  -DCMAKE_BUILD_TYPE\u003dRelWithDebInfo \\\n  \"-B/Users/user/Documents/android thread/MyApplication/sdk/.cxx/RelWithDebInfo/2y2s1055/x86\" \\\n  -GNinja \\\n  -DANDROID_STL\u003dc++_shared\n",
+    "file_": "/Users/user/Documents/android thread/MyApplication/sdk/libcxx_helper/CMakeLists.txt",
+    "tag_": "release|x86",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {},
+      "fieldsDescending": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": -1634123310
+  },
+  {
+    "level_": 0,
+    "message_": "Exiting generation of /Users/user/Documents/android thread/MyApplication/sdk/.cxx/RelWithDebInfo/2y2s1055/x86/compile_commands.json.bin normally",
+    "file_": "/Users/user/Documents/android thread/MyApplication/sdk/libcxx_helper/CMakeLists.txt",
+    "tag_": "release|x86",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {},
+      "fieldsDescending": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": -1932987087
+  },
+  {
+    "level_": 0,
+    "message_": "done executing cmake",
+    "file_": "/Users/user/Documents/android thread/MyApplication/sdk/libcxx_helper/CMakeLists.txt",
+    "tag_": "release|x86",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {},
+      "fieldsDescending": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": 425471931
+  },
+  {
+    "level_": 0,
+    "message_": "write command file /Users/user/Documents/android thread/MyApplication/sdk/.cxx/RelWithDebInfo/2y2s1055/x86/metadata_generation_command.txt",
+    "file_": "/Users/user/Documents/android thread/MyApplication/sdk/libcxx_helper/CMakeLists.txt",
+    "tag_": "release|x86",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {},
+      "fieldsDescending": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": 540493705
+  },
+  {
+    "level_": 0,
+    "message_": "JSON generation completed without problems",
+    "file_": "/Users/user/Documents/android thread/MyApplication/sdk/libcxx_helper/CMakeLists.txt",
+    "tag_": "release|x86",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {},
+      "fieldsDescending": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": -1931422281
+  }
+]

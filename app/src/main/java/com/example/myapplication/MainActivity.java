@@ -1,5 +1,10 @@
 package com.example.myapplication;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import org.opencv.android.BaseLoaderCallback;
@@ -10,15 +15,19 @@ import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
+import org.opencv.core.MatOfRect;
+import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.objdetect.CascadeClassifier;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -38,13 +47,15 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
 
     private boolean              mIsColorSelected = false;
     private Mat                  mRgba;
+    private Mat                  mGrey;
     private Scalar               mBlobColorRgba;
     private Scalar               mBlobColorHsv;
     private ColorBlobDetector    mDetector;
     private Mat                  mSpectrum;
     private Size                 SPECTRUM_SIZE;
     private Scalar               CONTOUR_COLOR;
-
+    File cascFile;
+    CascadeClassifier faceDetector;
     private CameraBridgeViewBase mOpenCvCameraView;
 
     private BaseLoaderCallback  mLoaderCallback = new BaseLoaderCallback(this) {
@@ -56,7 +67,37 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
                     Log.i(TAG, "OpenCV loaded successfully");
                     mOpenCvCameraView.enableView();
                     mOpenCvCameraView.setCameraIndex(1);
+                    mOpenCvCameraView.setMaxFrameSize(300,420);
                     mOpenCvCameraView.setOnTouchListener(MainActivity.this);
+
+
+                    InputStream in = getResources().openRawResource(R.raw.haarcascade_eye);
+                    File cascadeDir = getDir("cascade", Context.MODE_PRIVATE);
+                    cascFile = new File(cascadeDir, "haarcascade_eye.xml");
+
+                    try {
+                        FileOutputStream fos = new FileOutputStream(cascFile);
+                        byte[] buffer = new byte[4096];
+                        int bytesRead=-1;
+                        while ((bytesRead = in.read(buffer)) != -1) {
+                            fos.write(buffer, 0, bytesRead);
+                        }
+                        in.close();
+                        fos.close();
+                        faceDetector = new CascadeClassifier(cascFile.getAbsolutePath());
+                        if (faceDetector.empty()) {
+                            faceDetector = null;
+                        } else {
+                            cascadeDir.delete();
+                        }
+
+
+                        break;
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 } break;
                 default:
                 {
@@ -92,10 +133,16 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
 
         getPermission();
         mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.myCameraView);
-        mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
+//        mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
         mOpenCvCameraView.setCameraPermissionGranted();
         mOpenCvCameraView.setCvCameraViewListener(this);
+        if (!OpenCVLoader.initDebug()) {
+            OpenCVLoader.initDebug();
+            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, mLoaderCallback);
+        } else {
+            mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
 
+        }
     }
 
     @Override
@@ -192,6 +239,15 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
 
     public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
         mRgba = inputFrame.rgba();
+        mGrey = inputFrame.gray();
+
+        // detect face
+        MatOfRect faceDetection = new MatOfRect();
+        faceDetector.detectMultiScale(mGrey, faceDetection);
+        for (Rect rect : faceDetection.toArray()) {
+            Imgproc.rectangle(mRgba, new Point(rect.x, rect.y), new Point(rect.x + rect.width, rect.y + rect.height), new Scalar(255, 0, 0));
+        }
+
 
 //        if (mIsColorSelected) {
 //            mDetector.process(mRgba);
