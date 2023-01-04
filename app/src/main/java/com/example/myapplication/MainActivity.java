@@ -67,7 +67,7 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
                     Log.i(TAG, "OpenCV loaded successfully");
                     mOpenCvCameraView.enableView();
                     mOpenCvCameraView.setCameraIndex(1);
-                    mOpenCvCameraView.setMaxFrameSize(300,420);
+                    mOpenCvCameraView.setMaxFrameSize(512,720);
                     mOpenCvCameraView.setOnTouchListener(MainActivity.this);
 
 
@@ -241,14 +241,25 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
         mRgba = inputFrame.rgba();
         mGrey = inputFrame.gray();
 
+
+        /// my code
         // detect face
         MatOfRect faceDetection = new MatOfRect();
         faceDetector.detectMultiScale(mGrey, faceDetection);
         for (Rect rect : faceDetection.toArray()) {
+            Log.d(TAG, "onCameraFrame: "+rect.x);
+            Log.d(TAG,"onCameraFrame:"+rect.width);
+          Log.d(TAG,"onCameraFrame:"+rect.x + rect.width);
+            if(rect.x>60&& rect.x<100)
             Imgproc.rectangle(mRgba, new Point(rect.x, rect.y), new Point(rect.x + rect.width, rect.y + rect.height), new Scalar(255, 0, 0));
         }
-
-
+Mat matRgbaFlip=new Mat();
+        mRgba = mRgba;
+        Mat mRgbaT = mRgba.t();
+        Core.flip(mRgbaT, matRgbaFlip, -1);
+        Imgproc.resize(matRgbaFlip, matRgbaFlip, mRgba.size());
+        mRgbaT.release();
+        return matRgbaFlip;
 //        if (mIsColorSelected) {
 //            mDetector.process(mRgba);
 //            List<MatOfPoint> contours = mDetector.getContours();
@@ -262,7 +273,8 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
 //            mSpectrum.copyTo(spectrumLabel);
 //        }
 
-        return mRgba;
+        /// previous code
+//        return mRgba;
     }
 
     private Scalar converScalarHsv2Rgba(Scalar hsvColor) {
