@@ -56,6 +56,7 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
     private Scalar               CONTOUR_COLOR;
     File cascFile;
     CascadeClassifier faceDetector;
+    CascadeClassifier eyeDetector;
     private CameraBridgeViewBase mOpenCvCameraView;
 
     private BaseLoaderCallback  mLoaderCallback = new BaseLoaderCallback(this) {
@@ -67,37 +68,13 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
                     Log.i(TAG, "OpenCV loaded successfully");
                     mOpenCvCameraView.enableView();
                     mOpenCvCameraView.setCameraIndex(1);
-                    mOpenCvCameraView.setMaxFrameSize(512,720);
+
+                    mOpenCvCameraView.setMaxFrameSize(500   ,400);
                     mOpenCvCameraView.setOnTouchListener(MainActivity.this);
 
 
-                    InputStream in = getResources().openRawResource(R.raw.haarcascade_eye);
-                    File cascadeDir = getDir("cascade", Context.MODE_PRIVATE);
-                    cascFile = new File(cascadeDir, "haarcascade_eye.xml");
-
-                    try {
-                        FileOutputStream fos = new FileOutputStream(cascFile);
-                        byte[] buffer = new byte[4096];
-                        int bytesRead=-1;
-                        while ((bytesRead = in.read(buffer)) != -1) {
-                            fos.write(buffer, 0, bytesRead);
-                        }
-                        in.close();
-                        fos.close();
-                        faceDetector = new CascadeClassifier(cascFile.getAbsolutePath());
-                        if (faceDetector.empty()) {
-                            faceDetector = null;
-                        } else {
-                            cascadeDir.delete();
-                        }
-
-
-                        break;
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+//                   initializeFaceDetector();
+                   initializeEyeDetector();
                 } break;
                 default:
                 {
@@ -106,6 +83,66 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
             }
         }
     };
+
+    private void initializeEyeDetector() {
+        InputStream in = getResources().openRawResource(R.raw.haarcascade_eye  );
+        File cascadeDir = getDir("cascadeEye", Context.MODE_PRIVATE);
+        cascFile = new File(cascadeDir, "haarcascade_eye.xml");
+
+        try {
+            FileOutputStream fos = new FileOutputStream(cascFile);
+            byte[] buffer = new byte[4096];
+            int bytesRead=-1;
+            while ((bytesRead = in.read(buffer)) != -1) {
+                fos.write(buffer, 0, bytesRead);
+            }
+            in.close();
+            fos.close();
+            eyeDetector = new CascadeClassifier(cascFile.getAbsolutePath());
+            if (eyeDetector.empty()) {
+                faceDetector = null;
+            } else {
+                cascadeDir.delete();
+            }
+
+
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void initializeFaceDetector() {
+        InputStream in = getResources().openRawResource(R.raw.haarcascade_frontalface_alt2);
+        File cascadeDir = getDir("cascade", Context.MODE_PRIVATE);
+        cascFile = new File(cascadeDir, "haarcascade_frontalface_alt2.xml");
+
+        try {
+            FileOutputStream fos = new FileOutputStream(cascFile);
+            byte[] buffer = new byte[4096];
+            int bytesRead=-1;
+            while ((bytesRead = in.read(buffer)) != -1) {
+                fos.write(buffer, 0, bytesRead);
+            }
+            in.close();
+            fos.close();
+            faceDetector = new CascadeClassifier(cascFile.getAbsolutePath());
+            if (faceDetector.empty()) {
+                faceDetector = null;
+            } else {
+                cascadeDir.delete();
+            }
+
+
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     public MainActivity() {
         Log.i(TAG, "Instantiated new " + this.getClass());
@@ -133,7 +170,6 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
 
         getPermission();
         mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.myCameraView);
-//        mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
         mOpenCvCameraView.setCameraPermissionGranted();
         mOpenCvCameraView.setCvCameraViewListener(this);
         if (!OpenCVLoader.initDebug()) {
@@ -239,19 +275,29 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
 
     public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
         mRgba = inputFrame.rgba();
-        mGrey = inputFrame.gray();
+   mGrey = inputFrame.gray();
 
 
         /// my code
         // detect face
         MatOfRect faceDetection = new MatOfRect();
-        faceDetector.detectMultiScale(mGrey, faceDetection);
+        eyeDetector.detectMultiScale(mGrey, faceDetection);
+        int i=0;
         for (Rect rect : faceDetection.toArray()) {
-            Log.d(TAG, "onCameraFrame: "+rect.x);
-            Log.d(TAG,"onCameraFrame:"+rect.width);
-          Log.d(TAG,"onCameraFrame:"+rect.x + rect.width);
-            if(rect.x>60&& rect.x<100)
-            Imgproc.rectangle(mRgba, new Point(rect.x, rect.y), new Point(rect.x + rect.width, rect.y + rect.height), new Scalar(255, 0, 0));
+
+      double area=    rect.width*rect.height;
+
+            if(rect.x>(mRgba.width()/2) && rect.y <(mRgba.height()/2))
+            {
+                Log.d(TAG, "AREA: "+area);
+                Log.d(TAG, "onCameraFrame: RECT x"+rect.x);
+                Log.d(TAG, "onCameraFrame: RECT width"+rect.width);
+                Log.d(TAG, "onCameraFrame: RECT y"+rect.y);
+                Log.d(TAG, "onCameraFrame: RECT height"+rect.height);
+                if(area>25)
+                Imgproc.rectangle(mRgba, new Point(rect.x, rect.y), new Point(rect.x + rect.width, rect.y + rect.height), new Scalar(255, 0, 0));
+
+            }
         }
 Mat matRgbaFlip=new Mat();
         mRgba = mRgba;
