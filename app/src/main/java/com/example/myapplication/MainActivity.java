@@ -26,9 +26,11 @@ import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -38,73 +40,84 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.View.OnTouchListener;
 import android.view.SurfaceView;
+import android.widget.ImageView;
+import android.widget.StackView;
+import android.widget.TextView;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 public class MainActivity extends Activity implements OnTouchListener, CvCameraViewListener2 {
-    private static final String  TAG              = "MainActivity";
+    private static final String TAG = "MainActivity";
 
-    private boolean              mIsColorSelected = false;
-    private Mat                  mRgba;
-    private Mat                  mGrey;
-    private Scalar               mBlobColorRgba;
-    private Scalar               mBlobColorHsv;
-    private ColorBlobDetector    mDetector;
-    private Mat                  mSpectrum;
-    private Size                 SPECTRUM_SIZE;
-    private Scalar               CONTOUR_COLOR;
+    private boolean mIsColorSelected = false;
+    private Mat mRgba;
+    private Mat mGrey;
+    private Scalar mBlobColorRgba;
+    private Scalar mBlobColorHsv;
+    private ColorBlobDetector mDetector;
+    private Mat mSpectrum;
+    private Size SPECTRUM_SIZE;
+    private Scalar CONTOUR_COLOR;
+    private ImageView imageView;
+    private TextView textView;
     File cascFile;
     CascadeClassifier faceDetector;
     CascadeClassifier eyeDetector;
     private CameraBridgeViewBase mOpenCvCameraView;
-
-    private BaseLoaderCallback  mLoaderCallback = new BaseLoaderCallback(this) {
+    long timeStamp = 0;
+    long now = 1;
+    int detected = 0;
+    boolean eyeDetected = false;
+    StackView stackView;
+    private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
         public void onManagerConnected(int status) {
             switch (status) {
-                case LoaderCallbackInterface.SUCCESS:
-                {
+                case LoaderCallbackInterface.SUCCESS: {
                     Log.i(TAG, "OpenCV loaded successfully");
                     mOpenCvCameraView.enableView();
                     mOpenCvCameraView.setCameraIndex(1);
-
-                    mOpenCvCameraView.setMaxFrameSize(500   ,400);
+                    mOpenCvCameraView.setMinimumHeight(mOpenCvCameraView.getHeight());
+                    mOpenCvCameraView.setMinimumWidth(mOpenCvCameraView.getWidth());
+                    mOpenCvCameraView.setMaxFrameSize(500, 400);
+                    mOpenCvCameraView.setMaxFrameSize(320, 240);
                     mOpenCvCameraView.setOnTouchListener(MainActivity.this);
 
 
-//                   initializeFaceDetector();
-                   initializeEyeDetector();
-                } break;
-                default:
-                {
+                    initializeFaceDetector();
+                    initializeEyeDetector();
+                }
+                break;
+                default: {
                     super.onManagerConnected(status);
-                } break;
+                }
+                break;
             }
         }
     };
 
     private void initializeEyeDetector() {
-        InputStream in = getResources().openRawResource(R.raw.haarcascade_eye  );
+        InputStream in = getResources().openRawResource(R.raw.haarcascade_eye_tree_eyeglasses);
         File cascadeDir = getDir("cascadeEye", Context.MODE_PRIVATE);
-        cascFile = new File(cascadeDir, "haarcascade_eye.xml");
+        cascFile = new File(cascadeDir, "haarcascade_eye_tree_eyeglasses.xml");
 
         try {
             FileOutputStream fos = new FileOutputStream(cascFile);
             byte[] buffer = new byte[4096];
-            int bytesRead=-1;
+            int bytesRead = -1;
             while ((bytesRead = in.read(buffer)) != -1) {
                 fos.write(buffer, 0, bytesRead);
             }
             in.close();
             fos.close();
             eyeDetector = new CascadeClassifier(cascFile.getAbsolutePath());
+
             if (eyeDetector.empty()) {
                 faceDetector = null;
             } else {
                 cascadeDir.delete();
             }
-
 
 
         } catch (FileNotFoundException e) {
@@ -115,14 +128,14 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
     }
 
     private void initializeFaceDetector() {
-        InputStream in = getResources().openRawResource(R.raw.haarcascade_frontalface_alt2);
+        InputStream in = getResources().openRawResource(R.raw.lbpcascade_frontalcatface);
         File cascadeDir = getDir("cascade", Context.MODE_PRIVATE);
-        cascFile = new File(cascadeDir, "haarcascade_frontalface_alt2.xml");
+        cascFile = new File(cascadeDir, "lbpcascade_frontalcatface.xml");
 
         try {
             FileOutputStream fos = new FileOutputStream(cascFile);
             byte[] buffer = new byte[4096];
-            int bytesRead=-1;
+            int bytesRead = -1;
             while ((bytesRead = in.read(buffer)) != -1) {
                 fos.write(buffer, 0, bytesRead);
             }
@@ -136,7 +149,6 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
             }
 
 
-
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -147,6 +159,7 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
     public MainActivity() {
         Log.i(TAG, "Instantiated new " + this.getClass());
     }
+
     private void getPermission() {
         if (Build.VERSION.SDK_INT > 22) {
             if (ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -158,17 +171,25 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
             Log.i("MainActivity", "no need");
         }
     }
-    /** Called when the activity is first created. */
+
+    /**
+     * Called when the activity is first created.
+     */
+    @SuppressLint("UseCompatLoadingForDrawables")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         Log.i(TAG, "called onCreate");
         super.onCreate(savedInstanceState);
+
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         setContentView(R.layout.activity_main);
+        imageView=findViewById(R.id.imageView8);
+        textView=findViewById(R.id.textView);
 
         getPermission();
+
         mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.myCameraView);
         mOpenCvCameraView.setCameraPermissionGranted();
         mOpenCvCameraView.setCvCameraViewListener(this);
@@ -182,16 +203,14 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
     }
 
     @Override
-    public void onPause()
-    {
+    public void onPause() {
         super.onPause();
         if (mOpenCvCameraView != null)
             mOpenCvCameraView.disableView();
     }
 
     @Override
-    public void onResume()
-    {
+    public void onResume() {
         super.onResume();
         if (!OpenCVLoader.initDebug()) {
             Log.d(TAG, "Internal OpenCV library not found. Using OpenCV Manager for initialization");
@@ -215,7 +234,7 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
         mBlobColorRgba = new Scalar(255);
         mBlobColorHsv = new Scalar(255);
         SPECTRUM_SIZE = new Size(200, 64);
-        CONTOUR_COLOR = new Scalar(255,0,0,255);
+        CONTOUR_COLOR = new Scalar(255, 0, 0, 255);
     }
 
     public void onCameraViewStopped() {
@@ -230,8 +249,8 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
         int xOffset = (mOpenCvCameraView.getWidth() - cols) / 2;
         int yOffset = (mOpenCvCameraView.getHeight() - rows) / 2;
 
-        int x = (int)event.getX() - xOffset;
-        int y = (int)event.getY() - yOffset;
+        int x = (int) event.getX() - xOffset;
+        int y = (int) event.getY() - yOffset;
 
         Log.i(TAG, "Touch image coordinates: (" + x + ", " + y + ")");
 
@@ -239,11 +258,11 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
 
         Rect touchedRect = new Rect();
 
-        touchedRect.x = (x>4) ? x-4 : 0;
-        touchedRect.y = (y>4) ? y-4 : 0;
+        touchedRect.x = (x > 4) ? x - 4 : 0;
+        touchedRect.y = (y > 4) ? y - 4 : 0;
 
-        touchedRect.width = (x+4 < cols) ? x + 4 - touchedRect.x : cols - touchedRect.x;
-        touchedRect.height = (y+4 < rows) ? y + 4 - touchedRect.y : rows - touchedRect.y;
+        touchedRect.width = (x + 4 < cols) ? x + 4 - touchedRect.x : cols - touchedRect.x;
+        touchedRect.height = (y + 4 < rows) ? y + 4 - touchedRect.y : rows - touchedRect.y;
 
         Mat touchedRegionRgba = mRgba.submat(touchedRect);
 
@@ -252,7 +271,7 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
 
         // Calculate average color of touched region
         mBlobColorHsv = Core.sumElems(touchedRegionHsv);
-        int pointCount = touchedRect.width*touchedRect.height;
+        int pointCount = touchedRect.width * touchedRect.height;
         for (int i = 0; i < mBlobColorHsv.val.length; i++)
             mBlobColorHsv.val[i] /= pointCount;
 
@@ -272,39 +291,91 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
 
         return false; // don't need subsequent touch events
     }
+    public static int getScreenWidth() {
+        return Resources.getSystem().getDisplayMetrics().widthPixels;
+    }
 
+    public static int getScreenHeight() {
+        return Resources.getSystem().getDisplayMetrics().heightPixels;
+    }
     public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
+        getWindowManager().getDefaultDisplay();
         mRgba = inputFrame.rgba();
-   mGrey = inputFrame.gray();
+        Mat matRgbaFlip = new Mat();
+timeStamp=System.currentTimeMillis();
+        Mat mRgbaT = mRgba.t();
+        Core.flip(mRgbaT, matRgbaFlip, -1);
+        Imgproc.resize(matRgbaFlip, matRgbaFlip, mRgba.size());
+        mRgbaT.release();
+
+        mGrey = inputFrame.gray();
 
 
         /// my code
         // detect face
         MatOfRect faceDetection = new MatOfRect();
-        eyeDetector.detectMultiScale(mGrey, faceDetection);
-        int i=0;
+        MatOfRect eyeDetections = new MatOfRect();
+        faceDetector.detectMultiScale(matRgbaFlip, faceDetection);
+        eyeDetector.detectMultiScale(matRgbaFlip, faceDetection);
+        if(eyeDetected)
         for (Rect rect : faceDetection.toArray()) {
+//        Log.d(TAG, "onCameraFrame: DETECTED NOW" + ( now  ));
+            Imgproc.rectangle(matRgbaFlip, new Point(rect.x, rect.y), new Point(rect.x + rect.width, rect.y + rect.height), new Scalar(255, 0, 0));
+//            imageView.setForeground(getResources().getDrawable(R.drawable.camera_frame_active));
+            double area = rect.width * rect.height;
 
-      double area=    rect.width*rect.height;
-
-            if(rect.x>(mRgba.width()/2) && rect.y <(mRgba.height()/2))
-            {
-                Log.d(TAG, "AREA: "+area);
-                Log.d(TAG, "onCameraFrame: RECT x"+rect.x);
-                Log.d(TAG, "onCameraFrame: RECT width"+rect.width);
-                Log.d(TAG, "onCameraFrame: RECT y"+rect.y);
-                Log.d(TAG, "onCameraFrame: RECT height"+rect.height);
-                if(area>25)
-                Imgproc.rectangle(mRgba, new Point(rect.x, rect.y), new Point(rect.x + rect.width, rect.y + rect.height), new Scalar(255, 0, 0));
-
-            }
         }
-Mat matRgbaFlip=new Mat();
-        mRgba = mRgba;
-        Mat mRgbaT = mRgba.t();
-        Core.flip(mRgbaT, matRgbaFlip, -1);
-        Imgproc.resize(matRgbaFlip, matRgbaFlip, mRgba.size());
-        mRgbaT.release();
+        int i = 0;
+
+        if (System.currentTimeMillis() - timeStamp < 1500)
+            if ((faceDetection.toArray().length) == 0) {
+                Log.d(TAG, "onCameraFrame:  DETECTED EYE" + "FALSE");
+
+                if (eyeDetected) {
+                    Log.d(TAG, "onCameraFrame: DETECTED BLINK 2" + (now - timeStamp));
+                    now = System.currentTimeMillis();
+                    if ((now - timeStamp) < 1000) {
+
+                        detected = detected + 1;
+
+                        Log.d(TAG, "onCameraFrame: DETECTED BLINK" + detected);
+                    }
+                eyeDetected=false;
+                    detected=0;
+                }
+            } else {
+                Log.d(TAG, "onCameraFrame:  DETECTED EYE" + "TRUE");
+                eyeDetected = true;
+                timeStamp = System.currentTimeMillis();
+                for (Rect rect : eyeDetections.toArray()) {
+
+//                Log.d(TAG, "onCameraFrame:  DETECTED EYE"+eyeDetected);
+                    Log.d(TAG, "onCameraFrame: DETECTED BLINK" + detected);
+                    eyeDetected = true;
+                    if ((now - timeStamp) < 300) {
+                        Imgproc.rectangle(matRgbaFlip, new Point(rect.x, rect.y), new Point(rect.x + rect.width, rect.y + rect.height), new Scalar(255, 0, 0));
+//
+//                    Log.d(TAG, "onCameraFrame: DETECTED" + detected);
+                    } else {
+                        detected = 0;
+                    }
+                }
+                textView.setText("DETECTED");
+//      double area=    rect.width*rect.height;
+
+//            if(rect.x>(mRgba.width()/2) && rect.y <(mRgba.height()/2))
+//            {
+//                Log.d(TAG, "AREA: "+area);
+//                Log.d(TAG, "onCameraFrame: RECT x"+rect.x);
+//                Log.d(TAG, "onCameraFrame: RECT width"+rect.width);
+//                Log.d(TAG, "onCameraFrame: RECT y"+rect.y);
+//                Log.d(TAG, "onCameraFrame: RECT height"+rect.height);
+////                if(area>25)
+//                Imgproc.rectangle(matRgbaFlip, new Point(rect.x, rect.y), new Point(rect.x + rect.width, rect.y + rect.height), new Scalar(255, 0, 0));
+//
+//            }
+            }
+
         return matRgbaFlip;
 //        if (mIsColorSelected) {
 //            mDetector.process(mRgba);
@@ -322,6 +393,7 @@ Mat matRgbaFlip=new Mat();
         /// previous code
 //        return mRgba;
     }
+
 
     private Scalar converScalarHsv2Rgba(Scalar hsvColor) {
         Mat pointMatRgba = new Mat();
