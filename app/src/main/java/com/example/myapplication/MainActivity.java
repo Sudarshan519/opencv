@@ -346,7 +346,7 @@ timeStamp=System.currentTimeMillis();
                 }
 //        Log.d(TAG, "onCameraFrame: DETECTED NOW" + ( now  ));
 
-                Imgproc.rectangle(matRgbaFlip, new Point(rect.x, rect.y), new Point(rect.x + rect.width, rect.y + rect.height), new Scalar(255, 0, 0));
+//                Imgproc.rectangle(matRgbaFlip, new Point(rect.x, rect.y), new Point(rect.x + rect.width, rect.y + rect.height), new Scalar(255, 0, 0));
 //            imageView.setForeground(getResources().getDrawable(R.drawable.camera_frame_active));
                 double area = rect.width * rect.height;
 
@@ -412,7 +412,7 @@ timeStamp=System.currentTimeMillis();
                     Log.d(TAG, "onCameraFrame: DETECTED BLINK" + detected);
                     eyeDetected = true;
                     if ((now - timeStamp) < 300) {
-                        Imgproc.rectangle(matRgbaFlip, new Point(rect.x, rect.y), new Point(rect.x + rect.width, rect.y + rect.height), new Scalar(255, 0, 0));
+//                        Imgproc.rectangle(matRgbaFlip, new Point(rect.x, rect.y), new Point(rect.x + rect.width, rect.y + rect.height), new Scalar(255, 0, 0));
 //
 //                    Log.d(TAG, "onCameraFrame: DETECTED" + detected);
                     } else {
@@ -435,23 +435,24 @@ timeStamp=System.currentTimeMillis();
 //
 //            }
             }
-
-        return matRgbaFlip;
-//        if (mIsColorSelected) {
-//            mDetector.process(mRgba);
+//
+//                if (mIsColorSelected) {
+//            mDetector.process(matRgbaFlip);
 //            List<MatOfPoint> contours = mDetector.getContours();
 //            Log.e(TAG, "Contours count: " + contours.size());
-//            Imgproc.drawContours(mRgba, contours, -1, CONTOUR_COLOR);
+//            Imgproc.drawContours(matRgbaFlip, contours, -1, CONTOUR_COLOR);
 //
-//            Mat colorLabel = mRgba.submat(4, 68, 4, 68);
+//            Mat colorLabel = matRgbaFlip.submat(4, 68, 4, 68);
 //            colorLabel.setTo(mBlobColorRgba);
 //
 //            Mat spectrumLabel = mRgba.submat(4, 4 + mSpectrum.rows(), 70, 70 + mSpectrum.cols());
 //            mSpectrum.copyTo(spectrumLabel);
 //        }
+        return matRgbaFlip;
+
 
         /// previous code
-//        return mRgba;
+//     return mRgba;
     }
 
 
