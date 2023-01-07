@@ -4,8 +4,8 @@
 4
 5    <uses-sdk
 6        android:minSdkVersion="21"
-6-->/Users/user/Documents/android thread/MyApplication/sdk/java/AndroidManifest.xml
+6-->C:\Users\HP\Desktop\opencv\sdk\java\AndroidManifest.xml
 7        android:targetSdkVersion="33" />
-7-->/Users/user/Documents/android thread/MyApplication/sdk/java/AndroidManifest.xml
+7-->C:\Users\HP\Desktop\opencv\sdk\java\AndroidManifest.xml
 8
 9</manifest>

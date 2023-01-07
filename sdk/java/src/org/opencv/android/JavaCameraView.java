@@ -212,8 +212,8 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
                     } else
                        mCamera.setPreviewDisplay(null);
 
-                    setDisplayOrientation(mCamera, 90);
-                    mCamera.setPreviewDisplay(getHolder());
+//                    setDisplayOrientation(mCamera, 90);
+//                    mCamera.setPreviewDisplay(getHolder());
                     /* Finally we are ready to start the preview */
                     Log.d(TAG, "startPreview");
                     mCamera.startPreview();

@@ -69,6 +69,7 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
     long now = 1;
     int detected = 0;
     boolean eyeDetected = false;
+    boolean faceDetected=false;
     StackView stackView;
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -78,10 +79,10 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
                     Log.i(TAG, "OpenCV loaded successfully");
                     mOpenCvCameraView.enableView();
                     mOpenCvCameraView.setCameraIndex(1);
-                    mOpenCvCameraView.setMinimumHeight(mOpenCvCameraView.getHeight());
-                    mOpenCvCameraView.setMinimumWidth(mOpenCvCameraView.getWidth());
-                    mOpenCvCameraView.setMaxFrameSize(500, 400);
-                    mOpenCvCameraView.setMaxFrameSize(320, 240);
+//                    mOpenCvCameraView.setMinimumHeight(mOpenCvCameraView.getHeight());
+//                    mOpenCvCameraView.setMinimumWidth(mOpenCvCameraView.getWidth());
+                    mOpenCvCameraView.setMaxFrameSize(600, 800);
+//                    mOpenCvCameraView.setMaxFrameSize(320, 240);
                     mOpenCvCameraView.setOnTouchListener(MainActivity.this);
 
 
@@ -221,6 +222,10 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
         }
     }
 
+  private void  changeLogo(){
+        textView.setText("DETECTED "+detected);
+//      imageView.setForeground(getResources().getDrawable(R.drawable.camera_frame_active));
+    }
     public void onDestroy() {
         super.onDestroy();
         if (mOpenCvCameraView != null)
@@ -316,39 +321,93 @@ timeStamp=System.currentTimeMillis();
         MatOfRect faceDetection = new MatOfRect();
         MatOfRect eyeDetections = new MatOfRect();
         faceDetector.detectMultiScale(matRgbaFlip, faceDetection);
-        eyeDetector.detectMultiScale(matRgbaFlip, faceDetection);
-        if(eyeDetected)
-        for (Rect rect : faceDetection.toArray()) {
-//        Log.d(TAG, "onCameraFrame: DETECTED NOW" + ( now  ));
-            Imgproc.rectangle(matRgbaFlip, new Point(rect.x, rect.y), new Point(rect.x + rect.width, rect.y + rect.height), new Scalar(255, 0, 0));
-//            imageView.setForeground(getResources().getDrawable(R.drawable.camera_frame_active));
-            double area = rect.width * rect.height;
+        eyeDetector.detectMultiScale(matRgbaFlip, eyeDetections);
+//        if(eyeDetected)
+        if(faceDetection.toArray().length>0) {
+            for (Rect rect : faceDetection.toArray()) {
+                faceDetected = true;
+                runOnUiThread(new Runnable() {
 
+                    @Override
+                    public void run() {
+                        imageView.setForeground(getResources().getDrawable(R.drawable.camera_frame_active));
+
+                        // Stuff that updates the UI
+
+                    }
+                });
+                if (eyeDetected) {
+
+                    if ((now - timeStamp) < 1000 && (now - timeStamp) > 80) {
+
+                        detected = detected + 1;
+                        changeLogo();
+                    }
+                }
+//        Log.d(TAG, "onCameraFrame: DETECTED NOW" + ( now  ));
+
+                Imgproc.rectangle(matRgbaFlip, new Point(rect.x, rect.y), new Point(rect.x + rect.width, rect.y + rect.height), new Scalar(255, 0, 0));
+//            imageView.setForeground(getResources().getDrawable(R.drawable.camera_frame_active));
+                double area = rect.width * rect.height;
+
+            }
+        }
+        else{
+            faceDetected=false;
+//            detected=0;
         }
         int i = 0;
 
         if (System.currentTimeMillis() - timeStamp < 1500)
-            if ((faceDetection.toArray().length) == 0) {
+            if ((eyeDetections.toArray().length) == 0) {
                 Log.d(TAG, "onCameraFrame:  DETECTED EYE" + "FALSE");
+                runOnUiThread(new Runnable() {
 
+                    @Override
+                    public void run() {
+                        changeLogo();
+                        imageView.setForeground(getResources().getDrawable(R.drawable.camera_frame_inactive));
+                        // Stuff that updates the UI
+
+                    }
+                });
                 if (eyeDetected) {
                     Log.d(TAG, "onCameraFrame: DETECTED BLINK 2" + (now - timeStamp));
                     now = System.currentTimeMillis();
-                    if ((now - timeStamp) < 1000) {
-
+                    if ((now - timeStamp) < 1000 && (now-timeStamp)>50) {
+                        if(faceDetected)
                         detected = detected + 1;
 
                         Log.d(TAG, "onCameraFrame: DETECTED BLINK" + detected);
                     }
                 eyeDetected=false;
-                    detected=0;
+                    runOnUiThread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            changeLogo();
+
+                            // Stuff that updates the UI
+
+                        }
+                    });
+
+//                    detected=0;
                 }
             } else {
                 Log.d(TAG, "onCameraFrame:  DETECTED EYE" + "TRUE");
                 eyeDetected = true;
                 timeStamp = System.currentTimeMillis();
                 for (Rect rect : eyeDetections.toArray()) {
+                    runOnUiThread(new Runnable() {
 
+                        @Override
+                        public void run() {
+                            changeLogo();
+
+                            // Stuff that updates the UI
+                        }
+                    });
 //                Log.d(TAG, "onCameraFrame:  DETECTED EYE"+eyeDetected);
                     Log.d(TAG, "onCameraFrame: DETECTED BLINK" + detected);
                     eyeDetected = true;
@@ -360,7 +419,8 @@ timeStamp=System.currentTimeMillis();
                         detected = 0;
                     }
                 }
-                textView.setText("DETECTED");
+//                Imgproc.rectangle(matRgbaFlip, new Point(100, 100), new Point( 300, 300));
+//                textView.setText("DETECTED");
 //      double area=    rect.width*rect.height;
 
 //            if(rect.x>(mRgba.width()/2) && rect.y <(mRgba.height()/2))

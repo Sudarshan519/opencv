@@ -1,0 +1,27 @@
+{
+  "buildFiles": [
+    "C:\\Users\\HP\\Desktop\\opencv\\sdk\\libcxx_helper\\CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "D:\\Games\\sdkflutter\\sdkwindows\\cmake\\3.18.1\\bin\\ninja.exe",
+      "-C",
+      "C:\\Users\\HP\\Desktop\\opencv\\sdk\\.cxx\\RelWithDebInfo\\25365h5i\\x86",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "D:\\Games\\sdkflutter\\sdkwindows\\cmake\\3.18.1\\bin\\ninja.exe",
+    "-C",
+    "C:\\Users\\HP\\Desktop\\opencv\\sdk\\.cxx\\RelWithDebInfo\\25365h5i\\x86",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {
+    "opencv_jni_shared::@6890427a1f51a3e7e1df": {
+      "artifactName": "opencv_jni_shared",
+      "abi": "x86",
+      "output": "C:\\Users\\HP\\Desktop\\opencv\\sdk\\.cxx\\RelWithDebInfo\\25365h5i\\x86\\libopencv_jni_shared.a",
+      "runtimeFiles": []
+    }
+  }
+}
